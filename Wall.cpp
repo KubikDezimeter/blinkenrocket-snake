@@ -1,8 +1,4 @@
 #include "Wall.h"
-#include <cassert>
-#include <cstdint>
-#include <iostream>
-#include <ostream>
 
 Wall::Wall() {
     for (auto& row : wall) {
