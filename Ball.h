@@ -16,7 +16,9 @@ class Ball {
         Coordinates getPosition() const;
         Vector getVelocity() const;
         void setPosition(Coordinates position);
+        void setPosition(int8_t x, int8_t y);
         void setVelocity(Vector velocity);
+        void setVelocity(int8_t dx, int8_t dy);
 };
 
 #endif
