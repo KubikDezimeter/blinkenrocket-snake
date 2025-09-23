@@ -1,10 +1,18 @@
-#include "Game.h"
+#include "PongGame.h"
 #include "TerminalDisplay.h"
+#include <ctime>
+#include <threads.h>
 
 int main() {
-    Game game {};
+    PongGame game {};
     TerminalDisplay display {};
-    display.show(game.render());
+
+    struct timespec sleeptime {.tv_nsec = 500 * 1000000};
+
+    do {
+        display.show(game.render());
+        thrd_sleep(&sleeptime, NULL);
+    } while (!game.step());
 
     return 0;
 }
