@@ -6,10 +6,10 @@
 class Paddle {
     private:
         /// X coordinate of the left half of the paddle
-        uint8_t position {3};
+        int8_t position {3};
 
     public:
-        uint8_t getPosition() const;
+        int8_t getPosition() const;
         void move_left();
         void move_right();
 };

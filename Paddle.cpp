@@ -1,7 +1,7 @@
 #include "Paddle.h"
 #include <cstdint>
 
-uint8_t Paddle::getPosition() const {
+int8_t Paddle::getPosition() const {
     return position;
 }
 
