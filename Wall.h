@@ -3,7 +3,9 @@
 
 #include "Coordinates.h"
 #include <array>
+#include <cassert>
 #include <cstdint>
+#include <iostream>
 #include <string_view>
 
 class Wall {
@@ -13,7 +15,11 @@ class Wall {
     public:
         Wall();
         bool is_block(Coordinates coordinates) const;
-        bool is_block(uint8_t x, uint8_t y) const;
+        bool is_block(int8_t x, int8_t y) const;
+        bool is_border(Coordinates coordinates) const;
+        bool is_border(int8_t x, int8_t y) const;
+        bool is_free(Coordinates coordinates) const;
+        bool is_free(int8_t x, int8_t y) const;
         void break_block(uint8_t x, uint8_t y);
         friend std::ostream& operator<<(std::ostream& out, const Wall& wall);
 };
