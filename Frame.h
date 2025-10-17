@@ -17,6 +17,8 @@ class Frame {
         void clearPixel(uint8_t x, uint8_t y);
         std::array<bool, 8>* begin();
         std::array<bool, 8>* end();
+        const std::array<bool, 8>* begin() const;
+        const std::array<bool, 8>* end() const;
         friend std::ostream& operator<<(std::ostream& out, const Frame& frame);
 };
 
