@@ -9,8 +9,11 @@
         ];
 
         perSystem = { config, self', inputs',  pkgs, pkgsCross, system, ... }: {
-            packages.default = pkgs.callPackage ./package.nix {  };
-            devShells.default = config.packages.default;
+            devShells.default = pkgs.mkShell {
+                nativeBuildInputs = [
+                    pkgs.pkgsCross.avr.buildPackages.gcc
+                ];
+            };
         };
     };
 }
