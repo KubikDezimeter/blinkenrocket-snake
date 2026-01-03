@@ -2,45 +2,35 @@
 
 Frame::Frame(const volatile uint8_t* data) {
     for (uint8_t row = 0; row < 8; ++row) {
-        for (uint8_t col = 0; col < 8; ++col) {
-            frame[row][col] = ((data[row] & (0b10000000 >> col)) != 0);
-        }
+        frame[row] = data[row];
     }
 }
 
 void Frame::setPixel(Coordinates coordinates) {
     if (coordinates.x < 8 && coordinates.y < 8)
-        frame[coordinates.y][coordinates.x] = true;
+        frame[coordinates.y] |= 0x80 >> coordinates.x;
 }
 
 void Frame::setPixel(uint8_t x, uint8_t y) {
     if (x < 8 && y < 8)
-        frame[y][x] = true;
+        frame[y] |= 0x80 >> x;
 }
 
 void Frame::clearPixel(Coordinates coordinates) {
     if (coordinates.x < 8 && coordinates.y < 8)
-        frame[coordinates.y][coordinates.x] = false;
+        frame[coordinates.y] &= 0x80 >> coordinates.x ^ 0xFF;
 }
 
 void Frame::clearPixel(uint8_t x, uint8_t y) {
     if (x < 8 && y < 8)
-        frame[y][x] = false;
+        frame[y] &= 0x80 >> x ^ 0xFF;
 }
 
 uint8_t Frame::rowByte(uint8_t row) const {
-    uint8_t byte {0};
-
     if (row > 7)
         return 0;
 
-    for (uint8_t i = 0; i < 8; i++) {
-        bool pixel = frame[row][i];
-        byte = byte << 1;
-        if (pixel) byte += 1;
-    }
-
-    return byte;
+    return frame[row];
 }
 
 //std::array<bool, 8>* Frame::begin() {

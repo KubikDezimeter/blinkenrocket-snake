@@ -7,7 +7,10 @@
 
 class Frame {
     private:
-        bool frame[8] {};
+        /**
+         * Holds the pixel data. Rows are ordered from top to bottom. The MSB is the leftmost pixel, the LSB is the rightmost pixel.
+         */
+        uint8_t frame[8] {};
 
     public:
         Frame() = default;
