@@ -12,9 +12,9 @@ ButtonHandler& ButtonHandler::getButtonHandler() {
 }
 
 bool ButtonHandler::get_button_l() {
-    return (PINC & _BV(PC3)) == 0;
+    return (PINC & _BV(PC7)) == 0;
 }
 
 bool ButtonHandler::get_button_r() {
-    return (PINC & _BV(PC7)) == 0;
+    return (PINC & _BV(PC3)) == 0;
 }
