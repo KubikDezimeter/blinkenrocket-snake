@@ -2,7 +2,6 @@
 #define DISPLAY_H_
 
 #include "Frame.h"
-#include <array>
 
 class Display {
     public:

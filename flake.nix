@@ -13,6 +13,7 @@
                 nativeBuildInputs = [
                     pkgs.pkgsCross.avr.buildPackages.gcc
                     packages.avr-pico-programmer
+                    pkgs.avrdude
                 ];
             };
             packages.default = pkgs.stdenv.mkDerivation {

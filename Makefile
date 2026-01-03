@@ -12,8 +12,8 @@ SHARED_FLAGS = ${MCU_FLAGS} -I. -Os -Wall -Wextra -pedantic
 SHARED_FLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 SHARED_FLAGS += -flto -mstrict-X
 
-CFLAGS += ${SHARED_FLAGS} -std=c14
-CXXFLAGS += ${SHARED_FLAGS} -std=c++14 -fno-rtti -fno-exceptions
+CFLAGS += ${SHARED_FLAGS} -std=c17
+CXXFLAGS += ${SHARED_FLAGS} -std=c++14 -fno-rtti -fno-exceptions -fno-threadsafe-statics
 
 ASFLAGS += ${MCU_FLAGS} -wA,--warn
 LDFLAGS += -Wl,--gc-sections
@@ -23,7 +23,7 @@ HEADERS =
 ASFILES  = $(wildcard src/*.S)
 CFILES   = $(wildcard src/*.c)
 #CXXFILES = $(wildcard src/*.cpp)
-CXXFILES = src/main.cpp src/HardwareDisplay.cpp src/Frame.cpp src/Coordinates.cpp src/Vector.cpp src/RocketGame.cpp
+CXXFILES = src/main.cpp src/ButtonHandler.cpp src/HardwareDisplay.cpp src/Frame.cpp src/Coordinates.cpp src/Time.cpp src/Vector.cpp
 OBJECTS  = ${CFILES:src/%.c=build/%.o} ${CXXFILES:src/%.cpp=build/%.o} ${ASFILES:src/%.S=build/%.o}
 
 all: build build/main.elf build/main.hex
@@ -49,6 +49,9 @@ build/main.elf: ${OBJECTS}
 	@echo
 	@avr-size --format=avr --mcu=${MCU} $@
 
+install: build/main.hex
+	avrdude -P usb -c usbtiny -p t88 -U flash:w:build/main.hex
+
 secsize: build/main.elf
 	${AVROBJDUMP} -hw -j.text -j.bss -j.data $<
 
@@ -58,4 +61,4 @@ funsize: build/main.elf
 clean:
 	rm -rf build/
 
-.PHONY: all secsize funsize
+.PHONY: all install secsize funsize

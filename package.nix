@@ -1,4 +1,4 @@
-{ lib, stdenv, pkgsCross, cmake }:
+{ lib, stdenv, cmake }:
 
 stdenv.mkDerivation {
     name = "blinkenrocket-firmware";
@@ -10,6 +10,5 @@ stdenv.mkDerivation {
 
     nativeBuildInputs = [
         cmake
-        pkgsCross.avr.buildPackages.gpp
     ];
 }

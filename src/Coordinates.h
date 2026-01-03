@@ -2,7 +2,7 @@
 #define COORDINATES_H_
 
 #include "Vector.h"
-#include <cstdint>
+#include <stdint.h>
 
 struct Coordinates {
     int8_t x;
