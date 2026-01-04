@@ -23,7 +23,7 @@ HEADERS =
 ASFILES  = $(wildcard src/*.S)
 CFILES   = $(wildcard src/*.c)
 #CXXFILES = $(wildcard src/*.cpp)
-CXXFILES = src/main.cpp src/ButtonHandler.cpp src/HardwareDisplay.cpp src/Frame.cpp src/Coordinates.cpp src/Time.cpp src/Vector.cpp
+CXXFILES = src/main.cpp src/ButtonHandler.cpp src/HardwareDisplay.cpp src/Frame.cpp src/Coordinates.cpp src/Random.cpp src/Snake.cpp src/SnakeGame.cpp src/Time.cpp src/Vector.cpp
 OBJECTS  = ${CFILES:src/%.c=build/%.o} ${CXXFILES:src/%.cpp=build/%.o} ${ASFILES:src/%.S=build/%.o}
 
 all: build build/main.elf build/main.hex

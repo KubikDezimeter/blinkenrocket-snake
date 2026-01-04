@@ -8,6 +8,7 @@ struct Coordinates {
     int8_t x;
     int8_t y;
 
+    Coordinates() : x(0), y(0) {};
     Coordinates(int8_t x, int8_t y) : x(x), y(y) {};
 
     friend Coordinates operator+(const Coordinates& coords, const Vector& vector);
