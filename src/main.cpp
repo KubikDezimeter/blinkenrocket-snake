@@ -30,11 +30,30 @@ int main() {
     bool button_l = false;
     bool button_r = false;
     uint32_t last_step { 0 };
+    bool blink { false };
 
     while (true) {
         uint32_t curr_time = time_ms;
         button_l = buttonHandler.update_button_press_l(curr_time);
         button_r = buttonHandler.update_button_press_r(curr_time);
+
+        if (ButtonHandler::get_button_state_l() && ButtonHandler::get_button_state_r()) {
+            game = SnakeGame {};
+        }
+
+        if (game.isGameover()) {
+            if (blink) {
+                display.show(game.render());
+            } else {
+                display.show(Frame {});
+            }
+
+            if (curr_time > last_step + delay(game.getScore())) {
+                blink = !blink;
+                last_step = curr_time;
+            }
+            continue;
+        }
 
         if (button_l) {
             game.pressLeft();
@@ -49,10 +68,6 @@ int main() {
         }
         
         display.show(game.render());
-
-        if (ButtonHandler::get_button_state_l() && ButtonHandler::get_button_state_r()) {
-            game = SnakeGame {};
-        }
     }
 
 

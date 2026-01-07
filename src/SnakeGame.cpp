@@ -20,6 +20,10 @@ uint8_t SnakeGame::getScore() const {
     return score;
 }
 
+bool SnakeGame::isGameover() const {
+    return gameover;
+}
+
 void SnakeGame::pressLeft() {
     snake.turnLeft();
 }
@@ -58,20 +62,6 @@ void SnakeGame::step() {
 
 Frame SnakeGame::render() const {
     Frame frame {};
-
-    if (gameover) {
-        uint8_t gameover_screen[8] {
-            0b00111100,
-            0b01111110,
-            0b11011011,
-            0b11111111,
-            0b11100111,
-            0b11011011,
-            0b01111110,
-            0b00111100,
-        };
-        return Frame { gameover_screen };
-    }
 
     // draw snake
     for (int i = snake.getTailIndex(); i != (snake.getHeadIndex() + 1) % 64; i = (i + 1) % 64) {

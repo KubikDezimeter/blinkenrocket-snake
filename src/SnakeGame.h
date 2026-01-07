@@ -18,6 +18,7 @@ class SnakeGame {
     public:
         SnakeGame();
         uint8_t getScore() const;
+        bool isGameover() const;
         void pressLeft();
         void pressRight();
         void step();
