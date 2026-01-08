@@ -26,6 +26,21 @@ void Frame::clearPixel(uint8_t x, uint8_t y) {
         frame[y] &= 0x80 >> x ^ 0xFF;
 }
 
+void Frame::transpose() {
+    uint8_t t_buffer[8] {};
+
+    for (uint8_t y = 0; y < 8; ++y) {
+        for (uint8_t x = 0; x < 8; ++x) {
+            uint8_t value = ((frame[x] & 0x80 >> y) != 0) ? 1 : 0;
+            t_buffer[y] = (t_buffer[y] << 1) + value;
+        }
+    }
+
+    for (int i = 0; i < 8; ++i) {
+        frame[i] = t_buffer[i];
+    }
+}
+
 uint8_t Frame::rowByte(uint8_t row) const {
     if (row > 7)
         return 0;
