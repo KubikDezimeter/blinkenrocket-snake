@@ -22,6 +22,17 @@ void Animation::append(const uint8_t* columns, const uint8_t col_count) {
     this->col_count += col_count;
 }
 
+
+void Animation::append(const uint8_t n) {
+    uint8_t index = n;
+    uint8_t width = digit_font[index][0];
+
+    for (uint8_t i = 1; i <= width; ++i) {
+        this->columns[this->col_count + i] = digit_font[index][i];
+    }
+    this->col_count += width + 1;
+}
+
 bool Animation::isFinished() const {
     return offset > col_count - 8;
 }

@@ -2,6 +2,7 @@
 #define ANIMATION_H
 
 #include <stdint.h>
+#include "Font.h"
 #include "Frame.h"
 
 class Animation {
@@ -10,6 +11,7 @@ class Animation {
         uint8_t getOffset() const;
         void setOffset(uint8_t offset);
         void append(const uint8_t* columns, const uint8_t col_count);
+        void appendChar(glyph_t);
         bool isFinished() const;
         Frame render(bool loop=false);
 
