@@ -10,6 +10,9 @@
 #include "SnakeGame.h"
 
 
+ButtonHandler& buttonHandler = ButtonHandler::getButtonHandler();
+SnakeGame game {};
+
 
 int delay(const uint8_t score) {
     return 80 * sqrt(-score + 70);
@@ -21,11 +24,8 @@ int main() {
     wdt_disable();
 
     init_time();
-    ButtonHandler& buttonHandler = ButtonHandler::getButtonHandler();
     display.enable();
 
-
-    SnakeGame game {};
 
     bool button_l = false;
     bool button_r = false;
