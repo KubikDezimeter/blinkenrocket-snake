@@ -38,7 +38,7 @@ int main() {
         button_r = buttonHandler.update_button_press_r(curr_time);
 
         if (ButtonHandler::get_button_state_l() && ButtonHandler::get_button_state_r()) {
-            game = SnakeGame {};
+            game.reset();
         }
 
         if (game.isGameover()) {
@@ -66,7 +66,7 @@ int main() {
             game.step();
             last_step = curr_time;
         }
-        
+
         display.show(game.render());
     }
 
