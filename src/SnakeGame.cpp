@@ -24,6 +24,13 @@ bool SnakeGame::isGameover() const {
     return gameover;
 }
 
+void SnakeGame::reset() {
+    gameover = false;
+    score = 0;
+    snake.reset();
+    generate_food();
+}
+
 void SnakeGame::pressLeft() {
     snake.turnLeft();
 }

@@ -19,6 +19,7 @@ class SnakeGame {
         SnakeGame();
         uint8_t getScore() const;
         bool isGameover() const;
+        void reset();
         void pressLeft();
         void pressRight();
         void step();

@@ -57,6 +57,16 @@ Coordinates Snake::getNextHead() const {
     return next_head;
 }
 
+void Snake::reset() {
+    body[0] = {1, 2};
+    body[1] = {2, 2};
+    body[2] = {3, 2};
+    head_index = 2;
+    tail_index = 0;
+    length = 3;
+    direction = right;
+}
+
 void Snake::move(bool grow) {
     uint8_t next_head_index = (head_index + 1) % 64;
     Coordinates next_head = getNextHead();

@@ -18,6 +18,7 @@ class Snake {
         uint8_t getTailIndex() const;
         Direction getBodyDirection() const;
         Coordinates getNextHead() const;
+        void reset();
         void move(bool grow);
         void turnLeft();
         void turnRight();
