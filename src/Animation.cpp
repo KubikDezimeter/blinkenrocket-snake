@@ -19,6 +19,10 @@ uint8_t Animation::getOffset() const {
     return offset;
 }
 
+uint8_t Animation::getColCount() const {
+    return col_count;
+}
+
 void Animation::setOffset(uint8_t offset) {
     offset = offset;
 }
