@@ -5,15 +5,13 @@ SnakeGame::SnakeGame() {
 }
 
 void SnakeGame::generate_food() {
-    Coordinates new_food {};
-    new_food.x = xorshift32(r) % 8;
-    new_food.y = xorshift32(r) % 8;
+    food.x = xorshift32(r) % 8;
+    food.y = xorshift32(r) % 8;
 
-    while (snake.checkCollision(new_food)) {
-        new_food.x = xorshift32(r) % 8;
-        new_food.y = xorshift32(r) % 8;
+    while (snake.checkCollision(food)) {
+        food.x = xorshift32(r) % 8;
+        food.y = xorshift32(r) % 8;
     }
-    food = new_food;
 }
 
 uint8_t SnakeGame::getScore() const {
