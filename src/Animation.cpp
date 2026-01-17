@@ -7,6 +7,14 @@ Animation::Animation(uint8_t* const columns, const uint8_t col_count, const uint
     offset {0}
 {};
 
+void Animation::reset() {
+    for (int i = 0; i < capacity; ++i) {
+        columns[i] = 0b00000000;
+    }
+    col_count = 0;
+    offset = 0;
+}
+
 uint8_t Animation::getOffset() const {
     return offset;
 }
