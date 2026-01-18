@@ -10,6 +10,7 @@
 class HardwareDisplay : Display {
     public:
         virtual void enable();
+        virtual void disable();
         virtual void show(Frame frame) const;
         void multiplex();
 

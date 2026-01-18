@@ -20,6 +20,13 @@ void HardwareDisplay::enable() {
     sei();
 }
 
+void HardwareDisplay::disable() {
+    // disable counter interrupts
+    TIMSK0 &= ~_BV(TOIE0);
+    PORTB = 0x00;
+    PORTD = 0x00;
+}
+
 void HardwareDisplay::show(const Frame frame) const {
     display.frame = frame;
 }
