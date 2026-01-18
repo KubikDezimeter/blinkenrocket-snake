@@ -14,6 +14,12 @@ ButtonHandler& buttonHandler = ButtonHandler::getButtonHandler();
 SnakeGame game {};
 
 
+bool button_l = false;
+bool button_r = false;
+uint32_t last_step { 0 };
+bool blink { false };
+
+
 int delay(const uint8_t score) {
     return 80 * sqrt(-score + 70);
 }
@@ -27,10 +33,6 @@ int main() {
     display.enable();
 
 
-    bool button_l = false;
-    bool button_r = false;
-    uint32_t last_step { 0 };
-    bool blink { false };
 
     while (true) {
         uint32_t curr_time = time_ms;
