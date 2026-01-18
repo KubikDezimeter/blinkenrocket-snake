@@ -36,6 +36,7 @@ Animation score {score_buffer, 8, sizeof(score_buffer)};
 
 bool button_l = false;
 bool button_r = false;
+uint32_t curr_time;
 uint32_t last_step { 0 };
 bool blink { false };
 
@@ -62,7 +63,7 @@ int main() {
     reset_score();
 
     while (true) {
-        uint32_t curr_time = time_ms;
+        curr_time = time_ms;
         button_l = buttonHandler.update_button_press_l(curr_time);
         button_r = buttonHandler.update_button_press_r(curr_time);
 
