@@ -1,6 +1,6 @@
 #include "Random.h"
 
-uint32_t seed {0x32489753};
+uint32_t seed {0x32489757};
 uint32_t* r { &seed };
 
 // Taken from https://en.wikipedia.org/w/index.php?title=Xorshift&oldid=1328892960
