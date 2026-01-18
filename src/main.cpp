@@ -59,6 +59,7 @@ int main() {
     init_time();
     display.enable();
 
+    sei();
 
     reset_score();
 

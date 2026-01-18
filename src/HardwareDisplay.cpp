@@ -3,7 +3,6 @@
 HardwareDisplay display;
 
 void HardwareDisplay::enable() {
-    cli();
     // Ports B and D drive the dot matrix display -> set all as output
 	DDRB = 0xff;
 	DDRD = 0xff;
@@ -16,8 +15,6 @@ void HardwareDisplay::enable() {
 
     PORTB = 4;
     PORTD = 4;
-
-    sei();
 }
 
 void HardwareDisplay::disable() {
