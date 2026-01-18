@@ -38,6 +38,7 @@ bool button_l = false;
 bool button_r = false;
 uint32_t curr_time;
 uint32_t last_step { 0 };
+uint32_t last_action { 0 };
 bool blink { false };
 
 
@@ -49,6 +50,33 @@ void reset_score() {
 
 int delay(const uint8_t score) {
     return 80 * sqrt(-score + 70);
+}
+
+void sleep() {
+    display.disable();
+
+    // Setup Pin Change Interrupts for Button pins (PC3/PCINT11 and PC7/PCINT15)
+    PCMSK1 |= _BV(PCINT11) | _BV(PCINT15);
+    PCICR |= _BV(PCIE1);  // PCINT1 is used for pins PCINT[15:8]
+
+    // Go to sleep
+    SMCR |= _BV(SM1) | _BV(SE);  // Set Sleep mode Power-down and enable sleep instruction
+    asm("sleep");
+
+    // (wakeup)
+
+    // Reset sleep enable bit
+    SMCR &= ~_BV(SE);
+
+    // Disable Pin Change Interrupts again
+    PCICR &= ~_BV(PCIE1);
+    PCMSK1 &= ~(_BV(PCINT11) | _BV(PCINT15));
+
+    display.enable();
+
+    // Wait for wakeup buttons to be released again
+    while (ButtonHandler::get_button_state_l() || ButtonHandler::get_button_state_r());
+    wait_ms(50);  // Wait a moment for buttons to stop bouncing
 }
 
 int main() {
@@ -68,6 +96,10 @@ int main() {
         button_l = buttonHandler.update_button_press_l(curr_time);
         button_r = buttonHandler.update_button_press_r(curr_time);
 
+        if (ButtonHandler::get_button_state_l() || ButtonHandler::get_button_state_r()) {
+            last_action = curr_time;
+        }
+
         if (ButtonHandler::get_button_state_l() && ButtonHandler::get_button_state_r()) {
             game.reset();
             reset_score();
@@ -77,6 +109,12 @@ int main() {
         }
 
         if (game.isGameover()) {
+            // Go to sleep 30 seconds after last action
+            if (last_action + 30000 < curr_time) {
+                sleep();
+                last_action = curr_time;
+            }
+
             // Append score to score animation if necessary
             if (score.getColCount() == 8+sizeof(score_message)) {
                 uint8_t gamescore = game.getScore();
@@ -93,6 +131,7 @@ int main() {
             // Show score animation
             while (!score.isFinished()) {
                 display.show(score.render(false));
+                last_action = curr_time;
                 wait_ms(100);
 
                 if (ButtonHandler::get_button_state_l() && ButtonHandler::get_button_state_r()) {
@@ -115,7 +154,6 @@ int main() {
             //    last_step = curr_time;
             //}
         } else {
-
             if (button_l) {
                 game.pressLeft();
             }
@@ -128,10 +166,16 @@ int main() {
                 last_step = curr_time;
             }
             display.show(game.render());
+            last_action = curr_time;
         }
 
     }
 
 
     return 0;
+}
+
+
+ISR(PCINT1_vect) {
+    // The interrupt is just used for wakeup. No further actions necessary.
 }
