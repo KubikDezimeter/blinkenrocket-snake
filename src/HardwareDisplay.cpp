@@ -12,9 +12,6 @@ void HardwareDisplay::enable() {
 
 	// raise timer interrupt on counter overflow (-> interrupt frequency = ~4kHz)
 	TIMSK0 = _BV(TOIE0);
-
-    PORTB = 4;
-    PORTD = 4;
 }
 
 void HardwareDisplay::disable() {
