@@ -28,6 +28,21 @@ void HardwareDisplay::show(const Frame frame) const {
     display.frame = frame;
 }
 
+/*
+ * LED is on when current flows from port B (columns) to port D (rows)
+ * -> LEDs in [schematic](https://github.com/blinkenrocket/hardware/blob/master/blinkenrocket_cr2032.pdf) seem to be flipped
+ *
+ * Pin order with rocket tip pointing up
+ *    B01234567
+ *   D7        
+ *   D6        
+ *   D5        
+ *   D4        
+ *   D3        
+ *   D2        
+ *   D1        
+ *   D0        
+ */
 void HardwareDisplay::multiplex() {
     PORTD = 255;
     uint8_t row = frame.rowByte(activeRow);
