@@ -12,7 +12,7 @@ void init_time() {
     TCCR1B = _BV(WGM12)|_BV(CS10);
 
     // Set top value to 8 Mhz / 1000 hz = 8000 -> Interrupt every ms
-    OCR1A = 8294;
+    OCR1A = 8225;  // calibrated value
 
     // Set OCIE1A -> Enable interrupt
     TIMSK1 = _BV(OCIE1A);
