@@ -4,14 +4,14 @@ HardwareDisplay display;
 
 void HardwareDisplay::enable() {
     // Ports B and D drive the dot matrix display -> set all as output
-	DDRB = 0xff;
-	DDRD = 0xff;
+    DDRB = 0xff;
+    DDRD = 0xff;
 
     // Enable 8bit counter with prescaler=8 (-> timer frequency = 1MHz)
-	TCCR0A = _BV(CS01);
+    TCCR0A = _BV(CS01);
 
-	// raise timer interrupt on counter overflow (-> interrupt frequency = ~4kHz)
-	TIMSK0 = _BV(TOIE0);
+    // raise timer interrupt on counter overflow (-> interrupt frequency = ~4kHz)
+    TIMSK0 = _BV(TOIE0);
 }
 
 void HardwareDisplay::disable() {
@@ -51,8 +51,8 @@ void HardwareDisplay::multiplex() {
     PORTD = _BV(7 - activeRow) ^ 255;
 
     if (++activeRow == 8) {
-		activeRow = 0;
-	}
+        activeRow = 0;
+    }
 }
 
 /*

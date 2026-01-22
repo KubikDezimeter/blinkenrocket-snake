@@ -7,10 +7,10 @@ uint32_t* r { &seed };
 /* The state must be initialized to non-zero */
 uint32_t xorshift32(uint32_t* r)
 {
-	/* Algorithm "xor" from p. 4 of Marsaglia, "Xorshift RNGs" */
-	uint32_t x = *r;
-	x ^= x << 13;
-	x ^= x >> 17;
-	x ^= x << 5;
-	return *r = x;
+    /* Algorithm "xor" from p. 4 of Marsaglia, "Xorshift RNGs" */
+    uint32_t x = *r;
+    x ^= x << 13;
+    x ^= x >> 17;
+    x ^= x << 5;
+    return *r = x;
 }
