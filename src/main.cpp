@@ -13,26 +13,63 @@
 
 
 ButtonHandler& buttonHandler = ButtonHandler::getButtonHandler();
-SnakeGame game {};
 
-const uint8_t score_message[] {
-    0x32,0x49,0x49,0x49,0x26,
-    0x00,
-    0x0E,0x11,0x11,0x11,0x0A,
-    0x00,
-    0x0E,0x11,0x11,0x11,0x0E,
-    0x00,
-    0x1F,0x04,0x08,0x10,0x10,
-    0x00,
-    0x0E,0x15,0x15,0x15,0x0C,
-    0x00,
-    0x12,
-    0x00,0x00,0x00,
-};
 const uint8_t empty[8] {};
 const Frame empty_frame {};
-uint8_t score_buffer[8+sizeof(score_message)+2*6] {};
-Animation score {score_buffer, 8, sizeof(score_buffer)};
+uint8_t smiley_buf[8] {
+    0b00111100,
+    0b01111110,
+    0b11011011,
+    0b11111111,
+    0b11111111,
+    0b11011011,
+    0b01100110,
+    0b00111100,
+};
+uint8_t heart_buf[8] {
+    0b00000000,
+    0b01101100,
+    0b10010010,
+    0b10000010,
+    0b01000100,
+    0b00101000,
+    0b00010000,
+    0b00000000,
+};
+uint8_t rocket_buf[8] {
+    0b00011000,
+    0b00011000,
+    0b00100100,
+    0b00100100,
+    0b00111100,
+    0b00111100,
+    0b01011010,
+    0b01000010,
+};
+Frame smiley {smiley_buf};
+Frame heart {heart_buf};
+Frame rocket {rocket_buf};
+
+uint32_t delays[20] {
+    600,
+    550,
+    500,
+    450,
+    400,
+    350,
+    300,
+    250,
+    200,
+    150,
+    100,
+    80,
+    50,
+    35,
+    20,
+    10,
+    5,
+    2,
+};
 
 bool button_l = false;
 bool button_r = false;
@@ -41,136 +78,72 @@ uint32_t last_step { 0 };
 uint32_t last_action { 0 };
 bool blink { false };
 
-
-void reset_score() {
-    score.reset();
-    score.append(empty, sizeof(empty));
-    score.append(score_message, sizeof(score_message));
+int delay(const uint8_t x) {
+    //return 80 * sqrt(-i + 70);
+    //return 8000 / (x + 20) - 10;
+    return x < sizeof(delays) ? delays[x] : 0;
 }
 
-int delay(const uint8_t score) {
-    return 80 * sqrt(-score + 70);
-}
-
-void sleep() {
-    display.disable();
-
-    // Setup Pin Change Interrupts for Button pins (PC3/PCINT11 and PC7/PCINT15)
-    PCMSK1 |= _BV(PCINT11) | _BV(PCINT15);
-    PCICR |= _BV(PCIE1);  // PCINT1 is used for pins PCINT[15:8]
-
-    // Go to sleep
-    SMCR |= _BV(SM1) | _BV(SE);  // Set Sleep mode Power-down and enable sleep instruction
-    asm("sleep");
-
-    // (wakeup)
-
-    // Reset sleep enable bit
-    SMCR &= ~_BV(SE);
-
-    // Disable Pin Change Interrupts again
-    PCICR &= ~_BV(PCIE1);
-    PCMSK1 &= ~(_BV(PCINT11) | _BV(PCINT15));
-
-    display.enable();
-
-    // Wait for wakeup buttons to be released again
-    while (ButtonHandler::get_button_state_l() || ButtonHandler::get_button_state_r());
-    wait_ms(50);  // Wait a moment for buttons to stop bouncing
-}
-
-int main() {
-
+void demo_multiplexing() {
     // Disable Watchdog Timer to save power
     wdt_disable();
 
     init_time();
     display.enable();
+    display.disable();
 
     sei();
 
-    reset_score();
-
     while (true) {
-        curr_time = time_ms;
-        button_l = buttonHandler.update_button_press_l(curr_time);
-        button_r = buttonHandler.update_button_press_r(curr_time);
-
-        if (ButtonHandler::get_button_state_l() || ButtonHandler::get_button_state_r()) {
-            last_action = curr_time;
+        button_r = buttonHandler.update_button_press_r(time_ms);
+        if (button_r) {
+            break;
         }
-
-        if (ButtonHandler::get_button_state_l() && ButtonHandler::get_button_state_r()) {
-            game.reset();
-            reset_score();
-            last_step = curr_time;
-            display.show(game.render());  // Render for blinking
-            continue;
-        }
-
-        if (game.isGameover()) {
-            // Go to sleep 30 seconds after last action
-            if (last_action + 30000 < curr_time) {
-                sleep();
-                last_action = curr_time;
-            }
-
-            // Append score to score animation if necessary
-            if (score.getColCount() == 8+sizeof(score_message)) {
-                uint8_t gamescore = game.getScore();
-                if (gamescore < 10) {
-                    score.append(gamescore);
-                    score.append(empty, sizeof(empty));
-                } else {
-                    score.append(gamescore / 10);
-                    score.append(gamescore % 10);
-                    score.append(empty, sizeof(empty));
-                }
-            }
-
-            // Show score animation
-            while (!score.isFinished()) {
-                display.show(score.render(false));
-                last_action = curr_time;
-                wait_ms(100);
-
-                if (ButtonHandler::get_button_state_l() && ButtonHandler::get_button_state_r()) {
-                    game.reset();
-                    reset_score();
-                    last_step = curr_time;
-                    break;
-                }
-            }
-
-            display.show(game.render());
-            //if (blink) {
-            //    display.show(game.render());
-            //} else {
-            //    display.show(empty_frame);
-            //}
-
-            //if (curr_time > last_step + delay(game.getScore())) {
-            //    blink = !blink;
-            //    last_step = curr_time;
-            //}
-        } else {
-            if (button_l) {
-                game.pressLeft();
-            }
-            if (button_r) {
-                game.pressRight();
-            }
-
-            if (curr_time > last_step + delay(game.getScore())) {
-                game.step();
-                last_step = curr_time;
-            }
-            display.show(game.render());
-            last_action = curr_time;
-        }
-
     }
 
+    display.show(smiley);
+
+    uint8_t i {0};
+    while (i < (sizeof(delays) / sizeof(uint32_t)) - 1) {
+        i = time_ms / 600;
+        display.multiplex();
+        wait_ms(delay(i));
+    }
+
+    display.enable();
+
+    while (true) {
+        button_r = buttonHandler.update_button_press_r(time_ms);
+        if (button_r) {
+            break;
+        }
+    }
+
+    display.show(heart);
+
+    while (true) {
+        button_r = buttonHandler.update_button_press_r(time_ms);
+        if (button_r) {
+            break;
+        }
+    }
+    
+    display.show(rocket);
+
+    while (true) {
+        button_r = buttonHandler.update_button_press_r(time_ms);
+        if (button_r) {
+            break;
+        }
+    }
+    
+    display.show(empty_frame);
+
+    while (true);
+}
+
+int main() {
+    demo_multiplexing();
 
     return 0;
 }
