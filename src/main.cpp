@@ -53,6 +53,7 @@ const Frame smiley {smiley_buf};
 const Frame heart {heart_buf};
 const Frame rocket {rocket_buf};
 
+uint8_t temp_buf[8];
 Frame temp_frame {};
 
 uint32_t delays[20] {
@@ -76,12 +77,15 @@ uint32_t delays[20] {
     2,
 };
 
+uint8_t i;
+bool button_r_previous = false;
 bool button_l = false;
 bool button_r = false;
 uint32_t curr_time;
 uint32_t last_step { 0 };
 uint32_t last_action { 0 };
 bool blink { false };
+uint32_t counter { 0 };
 
 int delay(const uint8_t x) {
     //return 80 * sqrt(-i + 70);
@@ -147,8 +151,48 @@ void demo_bouncing() {
             signalRenderer.push(false);
         }
         temp_frame = signalRenderer.render();
+    }
+}
+
+void demo_counter(bool debounce) {
+    counter = 0;
+
+    while (true) {
+        // setup
+        button_l = buttonHandler.update_button_press_l(time_ms);
+
+        if (button_l) {
+            break;
+        }
+
+        // get button input
+        if (debounce) {
+            button_r = buttonHandler.update_button_press_r(time_ms);
+
+            if (button_r) {
+                ++counter;
+            }
+        } else {
+            button_r = buttonHandler.get_button_state_r();
+            if (button_r && !button_r_previous) {
+                ++counter;
+            }
+
+            button_r_previous = button_r;
+        }
+
+        // render
+        for (i = 0; i < 8; ++i) {
+            if (i == counter % 8) {
+                temp_buf[i] = 0xff;
+            } else {
+                temp_buf[i] = 0x00;
+            }
+        }
+
+        temp_frame = Frame { temp_buf };
+        temp_frame.transpose();
         display.show(temp_frame);
-        wait_ms(40);
     }
 }
 
@@ -162,7 +206,8 @@ int main() {
     sei();
 
     //demo_multiplexing();
-    demo_bouncing();
+    //demo_bouncing();
+    demo_counter(false);
 
     return 0;
 }
