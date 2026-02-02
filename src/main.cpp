@@ -47,9 +47,9 @@ uint8_t rocket_buf[8] {
     0b01011010,
     0b01000010,
 };
-Frame smiley {smiley_buf};
-Frame heart {heart_buf};
-Frame rocket {rocket_buf};
+const Frame smiley {smiley_buf};
+const Frame heart {heart_buf};
+const Frame rocket {rocket_buf};
 
 uint32_t delays[20] {
     600,
