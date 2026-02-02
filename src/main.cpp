@@ -86,14 +86,7 @@ int delay(const uint8_t x) {
 }
 
 void demo_multiplexing() {
-    // Disable Watchdog Timer to save power
-    wdt_disable();
-
-    init_time();
-    display.enable();
     display.disable();
-
-    sei();
 
     while (true) {
         button_r = buttonHandler.update_button_press_r(time_ms);
@@ -137,13 +130,17 @@ void demo_multiplexing() {
             break;
         }
     }
-    
-    display.show(empty_frame);
-
-    while (true);
 }
 
 int main() {
+    // Disable Watchdog Timer to save power
+    wdt_disable();
+
+    init_time();
+    display.enable();
+
+    sei();
+
     demo_multiplexing();
 
     return 0;
