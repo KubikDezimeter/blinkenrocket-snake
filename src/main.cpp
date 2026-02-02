@@ -8,12 +8,14 @@
 #include "Display.h"
 #include "Font.h"
 #include "HardwareDisplay.h"
+#include "SignalRenderer.h"
 #include "Time.h"
 #include "ButtonHandler.h"
 #include "SnakeGame.h"
 
 
 ButtonHandler& buttonHandler = ButtonHandler::getButtonHandler();
+SignalRenderer signalRenderer {4};
 
 const uint8_t empty[8] {};
 const Frame empty_frame {};
@@ -50,6 +52,8 @@ uint8_t rocket_buf[8] {
 const Frame smiley {smiley_buf};
 const Frame heart {heart_buf};
 const Frame rocket {rocket_buf};
+
+Frame temp_frame {};
 
 uint32_t delays[20] {
     600,
@@ -132,6 +136,22 @@ void demo_multiplexing() {
     }
 }
 
+void demo_bouncing() {
+    while (true) {
+        button_r = buttonHandler.update_button_press_r(time_ms);
+        if (button_r) {
+            signalRenderer.new_signal();
+            signalRenderer.push(true);
+            signalRenderer.push(false);
+            signalRenderer.push(true);
+            signalRenderer.push(false);
+        }
+        temp_frame = signalRenderer.render();
+        display.show(temp_frame);
+        wait_ms(40);
+    }
+}
+
 int main() {
     // Disable Watchdog Timer to save power
     wdt_disable();
@@ -141,7 +161,8 @@ int main() {
 
     sei();
 
-    demo_multiplexing();
+    //demo_multiplexing();
+    demo_bouncing();
 
     return 0;
 }
