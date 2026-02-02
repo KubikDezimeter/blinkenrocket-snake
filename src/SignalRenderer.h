@@ -2,6 +2,7 @@
 #define SIGNAL_RENDERER_H
 
 #include <stdint.h>
+#include "assert.h"
 #include "Frame.h"
 class SignalRenderer {
     public:

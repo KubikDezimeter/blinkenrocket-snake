@@ -33,12 +33,19 @@ Frame SignalRenderer::render() {
     bool value_next {};
 
     for (uint8_t i = 0; i < 8; ++i) {
-        // TODO check false path
-        value_current = index_current > 0 ? static_cast<bool>(signal & (static_cast<uint32_t>(1) << index_current)) : static_cast<bool>(signal & 1);
-        value_next = index_current > 0 ? static_cast<bool>(signal & (static_cast<uint32_t>(1) << (index_current - 1))) : static_cast<bool>(signal & 1);
+        // add signal if none is left to render
+        if (index_current <= 0) {
+            push(static_cast<bool>(signal & 1));
+            if (index_current < 31) {
+                ++index_current;
+            }
+        }
+
+        assert(index_current > 0);
+        value_current = static_cast<bool>(signal & (static_cast<uint32_t>(1) << index_current));
+        value_next = static_cast<bool>(signal & (static_cast<uint32_t>(1) << (index_current - 1)));
 
         edge = (stretch_counter == 0) && (value_current != value_next);
-        //edge = false;
         
         if (edge) {
             buf[i] = 0b01111110;
