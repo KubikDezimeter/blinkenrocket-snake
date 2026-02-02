@@ -7,6 +7,7 @@
 #include "Animation.h"
 #include "Display.h"
 #include "Font.h"
+#include "Frame.h"
 #include "HardwareDisplay.h"
 #include "SignalRenderer.h"
 #include "Time.h"
@@ -15,7 +16,7 @@
 
 
 ButtonHandler& buttonHandler = ButtonHandler::getButtonHandler();
-SignalRenderer signalRenderer {4};
+SignalRenderer signalRenderer {3};
 
 const uint8_t empty[8] {};
 const Frame empty_frame {};
@@ -105,7 +106,6 @@ void demo_multiplexing() {
 
     display.show(smiley);
 
-    uint8_t i {0};
     while (i < (sizeof(delays) / sizeof(uint32_t)) - 1) {
         i = time_ms / 600;
         display.multiplex();
@@ -141,17 +141,27 @@ void demo_multiplexing() {
 }
 
 void demo_bouncing() {
+    // setup right button interrupt to read input
+    PCMSK1 |= _BV(PCINT11);
+    PCICR |= _BV(PCIE1);
+
     while (true) {
-        button_r = buttonHandler.update_button_press_r(time_ms);
-        if (button_r) {
-            signalRenderer.new_signal();
-            signalRenderer.push(true);
-            signalRenderer.push(false);
-            signalRenderer.push(true);
-            signalRenderer.push(false);
+        curr_time = time_ms;
+
+        button_l = buttonHandler.update_button_press_l(curr_time);
+        if (button_l) {
+            break;
         }
+
+        // render
         temp_frame = signalRenderer.render();
+        display.show(temp_frame);
+
+        wait_ms(40);
     }
+
+    PCICR &= ~_BV(PCIE1);
+    PCMSK1 &= ~_BV(PCINT11);
 }
 
 void demo_counter(bool debounce) {
@@ -206,13 +216,19 @@ int main() {
     sei();
 
     //demo_multiplexing();
-    //demo_bouncing();
+    demo_bouncing();
     demo_counter(false);
+    display.show(empty_frame);
+    wait_ms(300);
+    demo_counter(true);
+
+    display.disable();
+    while (true);
 
     return 0;
 }
 
 
 ISR(PCINT1_vect) {
-    // The interrupt is just used for wakeup. No further actions necessary.
+    signalRenderer.push(buttonHandler.get_button_state_r());
 }
